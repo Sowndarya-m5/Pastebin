@@ -8,9 +8,12 @@ from config import TEST_MODE
 
 app = Flask(__name__)
 
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 def current_time():
     if TEST_MODE and request.headers.get("x-test-now-ms"):
@@ -68,10 +71,7 @@ def get_paste(paste_id, count=True):
         return None
 
     if count:
-        cur.execute(
-            "UPDATE pastes SET views_used=views_used+1 WHERE id=%s",
-            (paste_id,)
-        )
+        cur.execute("UPDATE pastes SET views_used=views_used+1 WHERE id=%s", (paste_id,))
         conn.commit()
 
     conn.close()
@@ -99,3 +99,7 @@ def paste_page(pid):
     if not paste:
         return render_template("404.html"), 404
     return render_template("paste.html", content=paste["content"])
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))  # Use Render PORT, default 8080
+    app.run(host="0.0.0.0", port=port, debug=True)
