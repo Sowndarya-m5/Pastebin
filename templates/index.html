@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Create Paste</h2>
+<form id="f">
+<textarea id="c"></textarea><br>
+<input type="number" id="ttl" placeholder="TTL seconds"><br>
+<input type="number" id="mv" placeholder="Max views"><br>
+<button>Create</button>
+</form>
+<pre id="out"></pre>
+
+<script>
+f.onsubmit = async e => {
+ e.preventDefault();
+ const r = await fetch("/api/pastes", {
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+   content:c.value,
+   ttl_seconds:+ttl.value||null,
+   max_views:+mv.value||null
+  })
+ });
+ out.textContent = JSON.stringify(await r.json(),null,2);
+}
+</script>
+</body>
+</html>
