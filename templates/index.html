@@ -5,24 +5,25 @@
   <title>Pastebin Lite</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg">
+<body>
 
-  <div class="container center">
-    <div class="card">
-      <h1>📝 Pastebin Lite</h1>
-      <p class="subtitle">Create & share text instantly</p>
+  <div class="container">
+    <h1>📝 Pastebin Lite</h1>
+    <p class="subtitle">Create and share text easily</p>
 
-      <form id="f">
-        <textarea id="c" placeholder="Paste your text here..." required></textarea>
+    <form id="f" class="card">
+      <label>Paste Content</label>
+      <textarea id="c" placeholder="Write or paste your text here..." required></textarea><br>
+      <br>
+      <label>TTL (seconds)</label>
+      <input type="number" id="ttl" placeholder="Eg: 60 (optional)"><br><br>
+      <label>Max Views</label>
+      <input type="number" id="mv" placeholder="Eg: 5 (optional)"><br><br>
 
-        <input type="number" id="ttl" placeholder="TTL in seconds (optional)">
-        <input type="number" id="mv" placeholder="Max views (optional)">
+      <button type="submit">Create Paste</button>
+    </form>
 
-        <button type="submit">✨ Create Paste</button>
-      </form>
-
-      <pre id="out" class="output"></pre>
-    </div>
+    <pre id="out" class="output"></pre>
   </div>
 
   <script>
