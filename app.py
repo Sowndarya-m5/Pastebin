@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, render_template
 from datetime import datetime, timedelta, timezone
 import uuid
@@ -42,11 +41,15 @@ def create_paste():
 
     conn = get_db_connection()
     cur = conn.cursor()
+
     cur.execute("""
-        INSERT INTO pastes (id, content, created_at, expires_at, max_views, views_used)
+        INSERT INTO pastes
+        (id, content, created_at, expires_at, max_views, views_used)
         VALUES (%s,%s,%s,%s,%s,%s)
     """, (paste_id, data["content"], created_at, expires_at, max_views, 0))
+
     conn.commit()
+    cur.close()
     conn.close()
 
     return jsonify({
@@ -58,13 +61,15 @@ def create_paste():
 def get_paste(paste_id, count=True):
     conn = get_db_connection()
     cur = conn.cursor()
+
     cur.execute("SELECT * FROM pastes WHERE id=%s", (paste_id,))
     row = cur.fetchone()
+
     if not row:
+        cur.close()
         conn.close()
         return None
 
-    # Convert tuple to dictionary manually
     paste = {
         "id": row[0],
         "content": row[1],
@@ -75,18 +80,25 @@ def get_paste(paste_id, count=True):
     }
 
     now = current_time()
+
     if paste["expires_at"] and now > paste["expires_at"]:
+        cur.close()
         conn.close()
         return None
 
     if paste["max_views"] is not None and paste["views_used"] >= paste["max_views"]:
+        cur.close()
         conn.close()
         return None
 
     if count:
-        cur.execute("UPDATE pastes SET views_used=views_used+1 WHERE id=%s", (paste_id,))
+        cur.execute(
+            "UPDATE pastes SET views_used = views_used + 1 WHERE id=%s",
+            (paste_id,)
+        )
         conn.commit()
 
+    cur.close()
     conn.close()
     return paste
 
@@ -116,7 +128,7 @@ def paste_page(pid):
     return render_template("paste.html", content=paste["content"])
 
 
+# 🔥 REQUIRED FOR RENDER
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
-
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
