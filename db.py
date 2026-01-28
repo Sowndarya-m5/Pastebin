@@ -10,13 +10,18 @@
 #     )
 
 
+
+
+
 import psycopg2
-from config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
+import os
 
 def get_db_connection():
-    return psycopg2.connect(
-        host="localhost",
-        user="postgres",
-        password="Sownd@05",
-        dbname="pastedb"
+    conn = psycopg2.connect(
+        host=os.environ.get("localhost"),
+        database=os.environ.get("pastedb"),
+        user=os.environ.get("postgres"),
+        password=os.environ.get("Sownd@05"),
+        port=os.environ.get("DB_PORT", 5432)  # default PostgreSQL port
     )
+    return conn
