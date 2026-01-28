@@ -101,4 +101,5 @@ def paste_page(pid):
     return render_template("paste.html", content=paste["content"])
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 8080))  # Use Render PORT, default 8080
+    app.run(host="0.0.0.0", port=port, debug=True)
