@@ -1,109 +1,143 @@
 * {
   box-sizing: border-box;
+  text-align: center;   /* ✅ Center ALL text */
 }
 
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+
+  /* 🌈 Background gradient */
+  background: linear-gradient(135deg, #667eea, #764ba2);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Main container */
 .container {
-  max-width: 600px;
-  margin: 50px auto;
+  width: 100%;
+  max-width: 650px;
   padding: 20px;
 }
 
-.center {
-  text-align: center;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 5px;
-}
-
-.subtitle {
-  text-align: center;
-  color: #555;
-  margin-bottom: 30px;
-}
-
+/* Card look */
 .card {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  border-radius: 12px;
+
+  /* ✨ Decoration */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+/* Headings */
+h1, h2 {
+  margin-bottom: 10px;
+  color: #222;
+}
+
+/* Subtitle / small text */
+.subtitle {
+  color: #555;
+  margin-bottom: 25px;
+  font-size: 15px;
+}
+
+/* Labels */
 label {
   font-weight: bold;
   display: block;
   margin-top: 15px;
+  color: #333;
 }
 
-textarea {
+/* Inputs & textarea */
+textarea,
+input {
   width: 100%;
-  height: 150px;
+  margin-top: 8px;
   padding: 10px;
-  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Textarea height */
+textarea {
+  height: 150px;
   resize: vertical;
 }
 
-input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-}
-
-button, .btn {
-  width: 100%;
+/* Button */
+button,
+.btn {
   margin-top: 20px;
-  padding: 10px;
-  background: #007bff;
-  border: none;
+  width: 100%;
+  padding: 12px;
+
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
+  border: none;
+  border-radius: 25px;
+
   font-size: 16px;
-  border-radius: 5px;
+  font-weight: bold;
   cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
+
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button:hover, .btn:hover {
-  background: #0056b3;
+button:hover,
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
+/* Output JSON box */
 .output {
-  background: #111;
-  color: #0f0;
+  margin-top: 25px;
   padding: 15px;
-  margin-top: 20px;
-  border-radius: 5px;
+  border-radius: 10px;
+
+  background: #111;
+  color: #00ff90;
+
+  font-size: 13px;
   overflow-x: auto;
 }
 
+/* Paste content page */
 .paste-content {
   white-space: pre-wrap;
   word-break: break-word;
+  font-size: 15px;
 }
 
+/* Links */
 .back-link {
   display: block;
-  text-align: center;
   margin-top: 20px;
-  color: #007bff;
+  color: #fff;
   text-decoration: none;
+  font-weight: bold;
 }
 
 .back-link:hover {
   text-decoration: underline;
 }
 
+/* 404 page text */
 .error-text {
   font-size: 18px;
-  margin-bottom: 20px;
-  color: #c0392b;
+  color: #ffdddd;
+}
+
+/* Center alignment helper */
+.center {
+  text-align: center;
 }
