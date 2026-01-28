@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import uuid
 import os
 
@@ -7,7 +7,6 @@ from db import get_db_connection
 from config import TEST_MODE
 
 app = Flask(__name__)
-
 
 
 @app.route("/")
@@ -18,12 +17,14 @@ def home():
 def current_time():
     if TEST_MODE and request.headers.get("x-test-now-ms"):
         ms = int(request.headers.get("x-test-now-ms"))
-        return datetime.utcfromtimestamp(ms / 1000)
-    return datetime.utcnow()
+        return datetime.fromtimestamp(ms / 1000, tz=timezone.utc)
+    return datetime.now(timezone.utc)
+
 
 @app.route("/api/healthz")
 def healthz():
     return jsonify({"ok": True}), 200
+
 
 @app.route("/api/pastes", methods=["POST"])
 def create_paste():
@@ -41,7 +42,8 @@ def create_paste():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO pastes VALUES (%s,%s,%s,%s,%s,%s)
+        INSERT INTO pastes (id, content, created_at, expires_at, max_views, views_used)
+        VALUES (%s,%s,%s,%s,%s,%s)
     """, (paste_id, data["content"], created_at, expires_at, max_views, 0))
     conn.commit()
     conn.close()
@@ -51,17 +53,30 @@ def create_paste():
         "url": f"{request.host_url}p/{paste_id}"
     }), 201
 
+
 def get_paste(paste_id, count=True):
     conn = get_db_connection()
-    cur = conn.cursor(dictionary=True)
+    cur = conn.cursor()
     cur.execute("SELECT * FROM pastes WHERE id=%s", (paste_id,))
-    paste = cur.fetchone()
+    row = cur.fetchone()
 
-    if not paste:
+    if not row:
         conn.close()
         return None
 
+    # column order:
+    # id, content, created_at, expires_at, max_views, views_used
+    paste = {
+        "id": row[0],
+        "content": row[1],
+        "created_at": row[2],
+        "expires_at": row[3],
+        "max_views": row[4],
+        "views_used": row[5]
+    }
+
     now = current_time()
+
     if paste["expires_at"] and now > paste["expires_at"]:
         conn.close()
         return None
@@ -71,11 +86,15 @@ def get_paste(paste_id, count=True):
         return None
 
     if count:
-        cur.execute("UPDATE pastes SET views_used=views_used+1 WHERE id=%s", (paste_id,))
+        cur.execute(
+            "UPDATE pastes SET views_used = views_used + 1 WHERE id=%s",
+            (paste_id,)
+        )
         conn.commit()
 
     conn.close()
     return paste
+
 
 @app.route("/api/pastes/<pid>")
 def paste_api(pid):
@@ -93,6 +112,7 @@ def paste_api(pid):
         "expires_at": paste["expires_at"].isoformat() if paste["expires_at"] else None
     })
 
+
 @app.route("/p/<pid>")
 def paste_page(pid):
     paste = get_paste(pid)
@@ -100,6 +120,7 @@ def paste_page(pid):
         return render_template("404.html"), 404
     return render_template("paste.html", content=paste["content"])
 
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use Render PORT, default 8080
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)

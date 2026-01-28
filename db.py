@@ -16,7 +16,7 @@ from config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 def get_db_connection():
     return psycopg2.connect(
         host="localhost",
-        user="root",
+        user="postgres",
         password="Sownd@05",
         dbname="pastedb"
     )
